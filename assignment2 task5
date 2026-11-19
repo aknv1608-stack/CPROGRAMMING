@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+int main()
+{
+    unsigned long n;
+    int prime = 1;
+    unsigned long checks = 0;
+
+    printf("Enter a number: ");
+    scanf("%lu", &n);
+
+    if (n < 2)
+        prime = 0;
+
+    for (unsigned long i = 2; i < n && prime; i++)
+    {
+        checks++;
+
+        if (n % i == 0)
+            prime = 0;
+    }
+
+    if (prime)
+        printf("Prime Number\n");
+    else
+        printf("Not Prime Number\n");
+
+    printf("Divisions = %lu\n", checks);
+
+    return 0;
+}
