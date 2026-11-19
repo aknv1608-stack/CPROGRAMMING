@@ -1,0 +1,62 @@
+#include <stdio.h>
+
+int main()
+{
+    int rain[38][12];
+    int i, j, sum, max;
+    int maxDistrict = 0, maxMonth = 0;
+    float total = 0, average;
+
+    printf("Enter rainfall data:\n");
+
+    for (i = 0; i < 38; i++)
+    {
+        for (j = 0; j < 12; j++)
+        {
+            scanf("%d", &rain[i][j]);
+            total += rain[i][j];
+        }
+    }
+
+    average = total / (38 * 12);
+    max = rain[0][0];
+
+    for (i = 0; i < 38; i++)
+    {
+        sum = 0;
+
+        for (j = 0; j < 12; j++)
+        {
+            sum += rain[i][j];
+
+            if (rain[i][j] > max)
+            {
+                max = rain[i][j];
+                maxDistrict = i;
+                maxMonth = j;
+            }
+        }
+
+        printf("District %d Annual Total = %d\n", i + 1, sum);
+    }
+
+    printf("State Average = %.2f\n", average);
+    printf("Maximum Rainfall = %d\n", max);
+    printf("Wettest District = %d\n", maxDistrict + 1);
+    printf("Wettest Month = %d\n", maxMonth + 1);
+
+    printf("Deficient Districts:\n");
+
+    for (i = 0; i < 38; i++)
+    {
+        sum = 0;
+
+        for (j = 0; j < 12; j++)
+            sum += rain[i][j];
+
+        if (sum / 12.0 < 0.6 * average)
+            printf("District %d\n", i + 1);
+    }
+
+    return 0;
+}
