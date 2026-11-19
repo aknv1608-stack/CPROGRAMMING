@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+
+struct Date {
+    int day, month, year;
+};
+
+struct BP {
+    int systolic, diastolic;
+};
+
+struct Patient {
+    char name[50];
+    int age;
+    char phone[16];
+    struct BP bp;
+    struct Date visitDate;
+};
+
+void addPatient(struct Patient *p, char n[], int a,
+                char ph[], int s, int d, struct Date date) {
+    strcpy(p->name, n);
+    p->age = a;
+    strcpy(p->phone, ph);
+    p->bp.systolic = s;
+    p->bp.diastolic = d;
+    p->visitDate = date;
+}
+
+int main() {
+    struct Patient p[100];
+    struct Date d = {19, 11, 2026};
+
+    addPatient(&p[0], "Karthika", 17, "9876543210",
+               120, 80, d);
+
+    printf("Patient Name: %s\n", p[0].name);
+    printf("Age: %d\n", p[0].age);
+    printf("Phone: %s\n", p[0].phone);
+    printf("Blood Pressure: %d/%d\n",
+           p[0].bp.systolic, p[0].bp.diastolic);
+    printf("Visit Date: %02d/%02d/%d\n",
+           p[0].visitDate.day,
+           p[0].visitDate.month,
+           p[0].visitDate.year);
+
+    return 0;
+}
