@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <string.h>
+
+enum Type {
+    PACKAGED, COOKED, COMBO
+};
+
+struct Date {
+    int day, month, year;
+};
+
+struct Item {
+    int id;
+    char name[30];
+    float price;
+    int stock;
+    enum Type type;
+
+    union {
+        struct Date expiry;
+        char preparedTime[20];
+        int itemIds[3];
+    } details;
+
+    float revenue;
+};
+
+void recordSale(struct Item *p, int quantity) {
+    if (quantity <= 0) {
+        printf("Invalid quantity!\n");
+    }
+    else if (quantity > p->stock) {
+        printf("Insufficient stock for %s\n", p->name);
+    }
+    else {
+        p->stock -= quantity;
+        p->revenue += p->price * quantity;
+
+        printf("Sale successful: %s\n", p->name);
+        printf("Bill Amount: %.2f\n",
+               p->price * quantity);
+    }
+}
+
+void expiryWarning(struct Item p[], int n,
+                   struct Date today) {
+    int todayDays = today.year * 365 +
+                    today.month * 30 + today.day;
+
+    for (int i = 0; i < n; i++) {
+        if (p[i].type == PACKAGED) {
+            int expiryDays =
+                p[i].details.expiry.year * 365 +
+                p[i].details.expiry.month * 30 +
+                p[i].details.expiry.day;
+
+            if (expiryDays >= todayDays &&
+                expiryDays - todayDays <= 2) {
+                printf("Expiry Warning: %s\n", p[i].name);
+            }
+        }
+    }
+}
+
+void sortRevenue(struct Item p[], int n) {
+    struct Item temp;
+
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (p[i].revenue < p[j].revenue) {
+                temp = p[i];
+                p[i] = p[j];
+                p[j] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    struct Item items[3] = {0};
+
+    items[0].id = 101;
+    strcpy(items[0].name, "Biscuit");
+    items[0].price = 20;
+    items[0].stock = 10;
+    items[0].type = PACKAGED;
+    items[0].details.expiry = (struct Date){21, 11, 2026};
+
+    items[1].id = 102;
+    strcpy(items[1].name, "Sandwich");
+    items[1].price = 50;
+    items[1].stock = 8;
+    items[1].type = COOKED;
+    strcpy(items[1].details.preparedTime, "10:30 AM");
+
+    items[2].id = 103;
+    strcpy(items[2].name, "Combo Meal");
+    items[2].price = 100;
+    items[2].stock = 5;
+    items[2].type = COMBO;
+    items[2].details.itemIds[0] = 101;
+    items[2].details.itemIds[1] = 102;
+
+    printf("COLLEGE CANTEEN BILLING SYSTEM\n\n");
+
+    recordSale(&items[0], 2);
+    recordSale(&items[1], 3);
+    recordSale(&items[2], 1);
+
+    recordSale(&items[0], 20);
+
+    printf("\nEXPIRY WARNINGS:\n");
+
+    struct Date today = {19, 11, 2026};
+    expiryWarning(items, 3, today);
+
+    sortRevenue(items, 3);
+
+    printf("\nDAILY REVENUE SUMMARY:\n");
+
+    for (int i = 0; i < 3; i++) {
+        printf("%s - Revenue: %.2f - Stock: %d\n",
+               items[i].name,
+               items[i].revenue,
+               items[i].stock);
+    }
+
+    return 0;
+}
